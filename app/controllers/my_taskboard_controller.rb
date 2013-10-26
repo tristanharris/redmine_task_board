@@ -9,35 +9,16 @@ class MyTaskboardController < ApplicationController
   end
 
   def index
-    issues = Issue.select( \
-          "issues.id,
-          issues.subject,
-          issues.status_id,
-          projects.name as project_name,
-          trackers.name as tracker_name,
-          issue_priority.name as priority_name,
-          issue_priority.id as priority_id,
-          projects.id as project_id,
-          tba.weight,
-          issue_statuses.name as status_name,
-          tba.issue_id"
-        ) \
+    TaskBoardAssignee
+    issues = Issue \
+        .joins(:status, :tracker, :project, :priority) \
+        .includes(:status, :tracker, :project, :priority) \
         .joins('LEFT OUTER JOIN task_board_assignees AS tba ON tba.issue_id = issues.id AND tba.assignee_id = issues.assigned_to_id') \
-        .joins('INNER JOIN issue_statuses ON issues.status_id = issue_statuses.id') \
-        .joins('INNER JOIN trackers ON trackers.id = issues.tracker_id') \
-        .joins('INNER JOIN projects ON projects.id = issues.project_id') \
-        .joins('INNER JOIN enumerations issue_priority ON issues.priority_id = issue_priority.id') \
-        .where("assigned_to_id = ? AND issue_statuses.is_closed = 0 AND projects.status = 1", @user.id) \
-        .order("weight ASC, issue_priority.position DESC")
-    @not_prioritized = Array.new
-    @prioritized = Array.new
+        .where(:assigned_to_id => @user, :issue_statuses => {:is_closed => false}, :projects => {:status => 1}) \
+        .order('tba.weight', 'enumerations.position DESC')
 
-    issues.each do |issue|
-      if issue.weight == nil or issue.weight == 0
-        @not_prioritized << issue
-      else
-        @prioritized << issue
-      end
+    @not_prioritized, @prioritized = issues.partition do |issue|
+      issue.task_board_assignee.nil? or issue.task_board_assignee.weight == nil or issue.task_board_assignee.weight == 0
     end
   end
 
