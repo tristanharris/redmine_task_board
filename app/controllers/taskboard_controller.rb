@@ -1,12 +1,12 @@
 class TaskboardController < ApplicationController
   unloadable
 
-  before_filter :find_project
+  before_filter :find_board
   before_filter :authorize
   helper_method :column_manager_locals
 
   def index
-    @columns = TaskBoardColumn.find_all_by_project_id(@project.id, :order => 'weight')
+    @columns = @taskboard.columns#, :order => 'weight')
     @status_names = Hash.new
     IssueStatus.select([:id, :name]).each do |status|
       @status_names[status.id] = status.name
@@ -48,8 +48,8 @@ class TaskboardController < ApplicationController
   end
 
   def create_column
-    @column = TaskBoardColumn.new :project => @project, :title => params[:title]
-    @column.save
+    @column = TaskBoardColumn.new(:title => params[:title])
+    @taskboard.columns << @column
     render 'settings/update'
   end
 
@@ -88,6 +88,11 @@ class TaskboardController < ApplicationController
     elsif(params[:issue_id]) then
       @project = Issue.find(params[:issue_id]).project
     end
+  end
+
+  def find_board
+    find_project
+    @taskboard = @project.task_board ||= TaskBoard.create!(:title => @project.name)
   end
 
 end

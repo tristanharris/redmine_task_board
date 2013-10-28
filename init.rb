@@ -1,6 +1,8 @@
 require 'redmine'
 require 'redmine_task_board_hook_listener'
 
+require 'task_board_project_patch'
+
 Rails.configuration.to_prepare do
   require_dependency 'projects_helper'
   ProjectsHelper.send(:include, RedmineTaskBoardSettingsPatch) unless ProjectsHelper.included_modules.include?(RedmineTaskBoardSettingsPatch)

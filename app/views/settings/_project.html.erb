@@ -21,7 +21,7 @@
 
 <div id="column_manager">
   <%= render :partial => 'settings/column_manager', :locals => {
-        :columns => TaskBoardColumn.find_all_by_project_id(@project.id, :order => "weight ASC"),
+        :columns => @project.task_board.columns,# :order => "weight ASC"),
         :statuses => IssueStatus.all
       }
   %>

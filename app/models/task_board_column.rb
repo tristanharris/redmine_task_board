@@ -1,8 +1,8 @@
 class TaskBoardColumn < ActiveRecord::Base
   unloadable
-  belongs_to :project
+  belongs_to :task_board
   has_and_belongs_to_many :issue_statuses
-  validates_presence_of :title, :project
+  validates_presence_of :title, :owner
   validates_length_of :title, :maximum => 255
 
   def self.empty_status(status_id)
@@ -18,9 +18,9 @@ class TaskBoardColumn < ActiveRecord::Base
   	@column_statuses = Hash.new
   	self.issue_statuses.order(:name).each do |status|
   		@column_statuses[status.id] = Array.new
-  		issues = Issue.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
+  		issues = task_board.owner.issues.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
   			.joins('LEFT OUTER JOIN task_board_issues AS tbi ON tbi.issue_id = issues.id') \
-  			.where("project_id = ? AND status_id = ? AND (is_archived IS NULL OR is_archived = 0)", self.project_id, status.id) \
+  			.where("status_id = ? AND (is_archived IS NULL OR is_archived = 0)", status.id) \
   			.order("weight ASC, created_on ASC")
   		issues.each do |issue|
         # Create a TaskBoardIssue (i.e. a Card) if one doesn't exist already.
