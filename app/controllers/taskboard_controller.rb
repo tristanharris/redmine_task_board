@@ -1,8 +1,8 @@
 class TaskboardController < ApplicationController
   unloadable
 
-  before_filter :find_project
-  before_filter :authorize
+  before_action :find_project
+  before_action :authorize
   helper_method :column_manager_locals
   helper TagsHelper if defined?(TagsHelper)
 
@@ -50,7 +50,7 @@ class TaskboardController < ApplicationController
           head :ok
         else
           response = failed_issues.map do |issue|
-            cards = TaskBoardIssue.find_all_by_issue_id(Project.all.first.issues.where(:status_id => issue.status_id)).sort{|a,b| a.project_weight <=> b.project_weight}
+            cards = TaskBoardIssue.where(issue_id: Project.all.first.issues.where(:status_id => issue.status_id)).sort{|a,b| a.project_weight <=> b.project_weight}
             index = cards.index{|i| i.issue_id == issue.id}
             prev_card_id = (index.nil? || index < 1) ? false : cards[index-1].issue_id
             {:issue_id => issue.id, :status_id => issue.status_id, :previous_sibling_id => prev_card_id}

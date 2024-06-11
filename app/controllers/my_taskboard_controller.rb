@@ -1,7 +1,7 @@
 class MyTaskboardController < ApplicationController
   unloadable
 
-  before_filter :my_account_or_admin
+  before_action :my_account_or_admin
 
   def my_index
     index
@@ -43,7 +43,7 @@ class MyTaskboardController < ApplicationController
   end
 
   def save
-    TaskBoardAssignee.destroy_all(:assignee_id => @user.id)
+    TaskBoardAssignee.where(:assignee_id => @user.id).destroy_all
     weight = 1;
     used_ids = Array.new
     params[:sort].each do |issue_id|
