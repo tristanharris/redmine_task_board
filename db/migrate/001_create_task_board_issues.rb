@@ -1,4 +1,4 @@
-class CreateTaskBoardIssues < ActiveRecord::Migration
+class CreateTaskBoardIssues < ActiveRecord::Migration[4.2]
   def change
     create_table :task_board_issues do |t|
       t.references :issue

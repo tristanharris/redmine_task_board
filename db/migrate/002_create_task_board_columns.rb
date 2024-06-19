@@ -1,4 +1,4 @@
-class CreateTaskBoardColumns < ActiveRecord::Migration
+class CreateTaskBoardColumns < ActiveRecord::Migration[4.2]
   def change
     create_table :task_board_columns do |t|
       t.references :project

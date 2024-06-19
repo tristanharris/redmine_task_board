@@ -1,4 +1,4 @@
-class CreateTaskBoardAssignees < ActiveRecord::Migration
+class CreateTaskBoardAssignees < ActiveRecord::Migration[4.2]
   def change
     create_table :task_board_assignees do |t|
       t.integer :issue_id

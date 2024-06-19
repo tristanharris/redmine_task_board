@@ -1,4 +1,4 @@
-class CreateStatusBuckets < ActiveRecord::Migration
+class CreateStatusBuckets < ActiveRecord::Migration[4.2]
   def self.up
     create_table :status_buckets do |t|
       t.integer :issue_status_id
