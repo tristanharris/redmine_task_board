@@ -7,7 +7,7 @@
     <%
       author_values = [[l(:task_board_anyone), '0']]
       author_values << ["<< #{l(:label_me)} >>", User.current.id] if User.current.logged?
-      author_values += @project.members.collect { |m| [ m.name, m.user.id ] }
+      author_values += @project.members.reorder(Principal.fields_for_order_statement).collect { |m| [ m.name, m.user.id ] }
     %>
     <%= select_tag("assignee", options_for_select(author_values)) %>
     <%= label_tag "priority", l(:task_board_priority) %>
