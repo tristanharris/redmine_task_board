@@ -354,7 +354,7 @@ var TaskBoardStatuses = TaskBoardSortable.extend({
       $input_wrapper.empty();
       $(this).find('.status-pill').each(function() {
         $input_wrapper.append(
-          '<input type="hidden" name="status[' + column_id + '][' + $(this).data('status-id') + ']" value=' + (weight++) + '" />'
+          '<input type="hidden" name="status[' + column_id + '][' + $(this).data('status-id') + ']" value="' + (weight++) + '" />'
         );
       });
     });
