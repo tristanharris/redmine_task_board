@@ -1,5 +1,4 @@
-require 'redmine'
-require 'redmine_task_board_hook_listener'
+require_relative './lib/redmine_task_board_hook_listener'
 
 Rails.configuration.to_prepare do
   RedmineTaskBoardSettingsPatch.apply
